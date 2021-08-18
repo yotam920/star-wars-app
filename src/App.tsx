@@ -1,26 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios';
+import React, { Component } from 'react';
+import { couldStartTrivia } from 'typescript';
+import { fetchData } from './api';
+import TableOfContent from './Components/tableOfContent';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface props{
+
 }
 
-export default App;
+interface states{
+  films: any;
+}
+
+
+export default class App extends React.Component<props,states>{
+
+  constructor(props : props) {
+    super(props);
+
+    this.state = {
+        films : []
+    }
+
+  }
+  
+  fetchData = async () => {
+    console.log("in fetch data")
+    const starWarsApi = "https://swapi.dev/api/films/";
+    await axios.get(`${starWarsApi}`).
+    then((response) => {
+      const fetchedFilms = response.data.results;
+      console.log("fetching...");
+      this.setState({
+        films : fetchedFilms,
+      })
+    })
+    .catch((error) => {
+      console.log("Error");
+    })
+    .then(()=> console.log("second then"))
+  }
+
+  poty = () => {
+    console.log(this.state.films)
+  }
+
+  componentDidMount(){
+    this.fetchData();
+    console.log("hey")
+    
+  }
+
+  render(){
+    return <TableOfContent films={this.state.films}></TableOfContent>
+  }
+}
